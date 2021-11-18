@@ -1,11 +1,12 @@
-import React, { Component } from "react";
+import * as React from "react";
 import FieldContext from "./FieldContext";
+import { Store } from "./types";
 
-export default class Field extends Component {
+export default class Field extends React.Component<any, any> {
   // eslint-disable-next-line react/static-property-placement
   static contextType = FieldContext;
 
-  cancelRegisterFunc;
+  cancelRegisterFunc: any;
 
   componentDidMount() {
     const { registerField } = this.context;
@@ -18,7 +19,7 @@ export default class Field extends Component {
     }
   }
 
-  onStoreChange = (prevStore, curStore) => {
+  onStoreChange = (prevStore: Store, curStore: Store) => {
     const { shouldUpdate } = this.props;
     if (typeof shouldUpdate === "function") {
       if (shouldUpdate(prevStore, curStore)) {
@@ -36,7 +37,7 @@ export default class Field extends Component {
       error: getFieldError(name),
       ...rest,
       value: getFieldValue(name),
-      onChange: (event) => {
+      onChange: (event: any) => {
         const newValue = event.target.value;
         setFieldsValue({ [name]: newValue });
       },
@@ -44,7 +45,7 @@ export default class Field extends Component {
   };
 
   render() {
-    const { children } = this.props;
+    const { children }: any = this.props;
     return React.cloneElement(children, { ...this.getControlled() });
   }
 }

@@ -1,8 +1,9 @@
-import React, { useRef } from "react";
+import * as React from "react";
 import useForm from "./useForm";
 import FieldContext from "./FieldContext";
+import { FormProps } from "./types";
 
-export default React.forwardRef((props, ref) => {
+export default React.forwardRef((props: FormProps, ref: any) => {
   const {
     form,
     children,
@@ -14,17 +15,18 @@ export default React.forwardRef((props, ref) => {
   } = props;
   const [formInstance] = useForm(form);
 
-  const { setInitialValues, setCallbacks } = formInstance.getInternalHooks();
+  const { setInitialValues, setCallbacks } =
+    formInstance?.getInternalHooks?.() ?? {};
 
   React.useImperativeHandle(ref, () => formInstance);
 
-  const mountRef = useRef(null);
-  setInitialValues(initialValues, !mountRef.current);
+  const mountRef: any = React.useRef(null);
+  setInitialValues?.(initialValues, !mountRef.current);
   if (!mountRef.current) {
     mountRef.current = true;
   }
 
-  setCallbacks({
+  setCallbacks?.({
     onSubmit,
     onError,
     onTouched,
@@ -36,10 +38,10 @@ export default React.forwardRef((props, ref) => {
       onSubmit={(event) => {
         event.preventDefault();
         event.stopPropagation();
-        formInstance.submit();
+        formInstance?.submit?.();
       }}
     >
-      <FieldContext.Provider value={formInstance}>
+      <FieldContext.Provider value={formInstance ?? {}}>
         {children}
       </FieldContext.Provider>
     </form>

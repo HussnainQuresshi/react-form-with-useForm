@@ -1,32 +1,35 @@
-import { useRef } from "react";
 import { setValues, getValue } from "./utils/valueUtil";
+import * as React from "react";
+import { Rule, StateValue, ErrorValue, Store, UseFormContext } from "./types";
 
 class FormStore {
-  store = {};
+  store: Store = {};
 
-  errors = {};
+  errors: { [key: string]: ErrorValue } = {};
 
-  rules = {};
+  rules: { [key: string]: Rule[] } = {};
 
-  fieldEntities = [];
+  fieldEntities: any[] = [];
 
-  initialValues = {};
+  initialValues: {
+    [key: string]: StateValue;
+  } = {};
 
-  callbacks = {};
+  callbacks: any = {};
 
-  getFieldValue = (name) => this.store[name];
+  getFieldValue = (name: string) => this.store[name];
 
   getFieldsValue = () => this.store;
 
-  getFieldRules = (name) => this.rules[name] ?? [];
+  getFieldRules = (name: string) => this.rules[name] ?? [];
 
   getFieldsErrors = () => this.errors;
 
-  getFieldError = (name) => this.errors?.[name]?.message || "";
+  getFieldError = (name: string) => this.errors?.[name]?.message || "";
 
   getFieldEntities = () => this.fieldEntities;
 
-  validateField = (_, __) => {
+  validateField = (_: string, __: any) => {
     const rules = this.getFieldRules(_);
     let value = __;
     const name = _;
@@ -35,9 +38,9 @@ class FormStore {
       value = value.value ? value.value : value || false;
     } else value = value?.trim();
 
-    let errors = [];
-    rules.forEach((rule) => {
-      const error = {};
+    let errors: ErrorValue[] = [];
+    rules.forEach((rule: Rule) => {
+      const error: ErrorValue = {};
       switch (Object.keys(rule).filter((___) => ___ !== "message")[0]) {
         case "required":
           if (rule.required) {
@@ -48,18 +51,20 @@ class FormStore {
           }
           break;
         case "min":
-          if (Number.isNaN(value)) error.hasError = value.length < rule.min;
-          else error.hasError = value < rule.min;
+          if (rule.min)
+            if (Number.isNaN(value)) error.hasError = value.length < rule.min;
+            else error.hasError = value < rule.min;
           error.message = error.hasError
             ? rule.message ?? `value must be grater then ${rule.min}`
             : "";
           break;
         case "max":
-          if (Number.isNaN(value)) {
-            error.hasError = value.length > rule.max;
-          } else {
-            error.hasError = value > rule.max;
-          }
+          if (rule.max)
+            if (Number.isNaN(value)) {
+              error.hasError = value.length > rule.max;
+            } else {
+              error.hasError = value > rule.max;
+            }
           error.message = error.hasError
             ? rule.message ?? `value must be less then ${rule.max}`
             : "";
@@ -88,13 +93,15 @@ class FormStore {
           }
           break;
         case "pattern":
-          error.hasError = !rule.pattern.test(value);
+          if (rule.pattern && typeof rule.pattern === "object")
+            error.hasError = !rule.pattern.test(value);
           error.message = error.hasError
             ? rule.message ?? `enter a valid email`
             : "";
           break;
         case "transform":
-          error.hasError = rule.transform(value);
+          if (typeof rule.transform === "function")
+            error.hasError = rule?.transform?.(value);
           error.message = error.hasError
             ? rule.message ??
               `this value does not satisfy the transform condition`
@@ -105,33 +112,35 @@ class FormStore {
       }
       errors.push(error);
     });
-    [errors] = errors.filter(({ hasError }) => hasError);
+    let [sinlgeError]: ErrorValue[] = errors.filter(
+      ({ hasError }: any) => hasError,
+    );
 
     if (value === "" || value === null || value === undefined) {
-      const [isRequired] = rules.filter((r) => r?.required);
+      const [isRequired] = rules.filter((r: any) => r?.required);
       if (!isRequired) {
-        errors = undefined;
+        sinlgeError = { hasError: false, message: "" };
       }
     }
-    this.setFieldsError({ [name]: errors });
+    this.setFieldsError({ [name]: sinlgeError });
     return errors;
   };
 
-  notifyObservers = (prevStore) => {
-    this.getFieldEntities().forEach((entity) => {
+  notifyObservers = (prevStore: Store) => {
+    this.getFieldEntities().forEach((entity: any) => {
       const { onStoreChange } = entity;
       onStoreChange(prevStore, this.getFieldsValue());
     });
   };
 
-  setFieldsError = (curErrors) => {
+  setFieldsError = (curErrors: any) => {
     if (curErrors) {
       this.errors = setValues(this.errors, curErrors);
     }
   };
 
-  setFieldsValue = (curStore) => {
-    const { onTouched = () => {} } = this.callbacks;
+  setFieldsValue = (curStore: Store) => {
+    const { onTouched = () => {} }: any = this.callbacks;
     const prevStore = this.store;
     if (curStore) {
       Object.entries(curStore).forEach(([key, value]) => {
@@ -143,19 +152,21 @@ class FormStore {
     this.notifyObservers(prevStore);
   };
 
-  registerField = (entity) => {
+  registerField = (entity: any) => {
     this.fieldEntities.push(entity);
     this.rules[entity.props.name] = entity.props.rules;
     return () => {
-      this.fieldEntities = this.fieldEntities.filter((item) => item !== entity);
+      this.fieldEntities = this.fieldEntities.filter(
+        (item: any) => item !== entity,
+      );
       delete this.store[entity.props.name];
       delete this.rules[entity.props.name];
     };
   };
 
   submit = () => {
-    const { onSubmit = () => {}, onError = () => {} } = this.callbacks;
-    const values = {};
+    const { onSubmit = () => {}, onError = () => {} }: any = this.callbacks;
+    const values: any = {};
     Object.keys(this.rules ?? {}).forEach((_) => {
       values[_] = this.getFieldValue(_) ?? "";
     });
@@ -170,9 +181,9 @@ class FormStore {
     }
   };
 
-  getInitialValue = (namePath) => getValue(this.initialValues, namePath);
+  getInitialValue = (namePath: any) => getValue(this.initialValues, namePath);
 
-  setInitialValues = (initialValues, init) => {
+  setInitialValues = (initialValues: any, init: any) => {
     this.initialValues = initialValues;
 
     if (init) {
@@ -180,11 +191,11 @@ class FormStore {
     }
   };
 
-  setCallbacks = (callbacks) => {
+  setCallbacks = (callbacks: {}) => {
     this.callbacks = callbacks;
   };
 
-  getForm = () => ({
+  getForm = (): UseFormContext => ({
     getFieldsErrors: this.getFieldsErrors,
     setFieldsError: this.setFieldsError,
     getFieldError: this.getFieldError,
@@ -200,14 +211,15 @@ class FormStore {
   });
 }
 
-export default function useForm(form) {
-  const formRef = useRef();
+export default function useForm(form?: UseFormContext) {
+  const formRef: React.MutableRefObject<undefined | UseFormContext> =
+    React.useRef();
   if (!formRef.current) {
     if (form) {
       formRef.current = form;
     } else {
-      const formStore = new FormStore();
-      formRef.current = formStore.getForm();
+      const formStore: FormStore = new FormStore();
+      if (formRef.current) formRef.current = formStore.getForm();
     }
   }
   return [formRef.current];

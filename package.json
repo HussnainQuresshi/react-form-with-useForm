@@ -1,50 +1,39 @@
 {
-  "name": "react-typescript-boilerplate",
+  "name": "react-form-component",
+  "email": "hussnain77133@gmail.com",
   "version": "1.0.0",
-  "description": "Light weight react typescript boilerplate to get you started",
-  "main": "app.ts",
-  "dependencies": {
-    "html-webpack-plugin": "^2.24.1",
-    "jquery": "^3.1.1",
-    "react": "^0.14",
-    "react-dom": "^0.14"
+  "description": "An HOC form component to manage state of form and give errors, and perform validations on fields",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
+  "types": "./lib/esm/index.d.ts",
+  "peerDependencies": {
+    "rc-util": "^5.15.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   },
+  "files": [
+    "/lib"
+  ],
   "devDependencies": {
-    "autoprefixer-loader": "^3.2.0",
-    "copy-webpack-plugin": "^3.0.1",
-    "css-loader": "^0.25.0",
-    "extract-text-webpack-plugin": "^1.0.1",
-    "file-loader": "^0.9.0",
-    "node-sass": "^3.10.1",
-    "sass-loader": "^4.0.2",
-    "source-map-loader": "^0.1.5",
-    "strip-loader": "^0.1.2",
-    "style-loader": "^0.13.1",
-    "ts-loader": "^0.9.0",
-    "typescript": "1.8.9",
-    "typings": "^0.7.9",
-    "url-loader": "^0.5.7",
-    "webpack": "^1.13.2",
-    "webpack-dev-server": "^1.16.2"
+    "@types/node": "^16.11.8",
+    "@types/react": "^17.0.35",
+    "@types/react-dom": "^17.0.11",
+    "typescript": "^4.5.2"
   },
   "scripts": {
-    "start": "webpack-dev-server --port 9001 -d",
-    "prepublish": "typings install"
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir lib/cjs"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ajainvivek/react-typescript-boilerplate.git"
+    "url": "git+https://github.com/HussnainQuresshi/react-form-with-useForm.git"
   },
-  "keywords": [
-    "motion",
-    "design",
-    "components",
-    "motionize"
-  ],
-  "author": "Ajain Vivek",
+  "keywords": [],
+  "author": "Hussnain Qureshi",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ajainvivek/react-typescript-boilerplate/issues"
+    "url": "https://github.com/HussnainQuresshi/react-form-with-useForm/issues"
   },
-  "homepage": "https://github.com/ajainvivek/react-typescript-boilerplate#readme"
+  "homepage": "https://github.com/HussnainQuresshi/react-form-with-useForm#readme"
 }

@@ -1,7 +1,4 @@
 import * as React from "react";
 import { UseFormContext } from "./types";
-
-const context: UseFormContext = {};
-const Context = React.createContext(context);
-
+declare const Context: React.Context<UseFormContext>;
 export default Context;
