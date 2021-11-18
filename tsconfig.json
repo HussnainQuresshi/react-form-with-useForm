@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "target": "es5",
+    "jsx": "react"
+  },
+  "files": [
+    "./src/app.tsx",
+    "./src/index.ts",
+    "./src/Field.ts",
+    "./src/FieldContext.ts",
+    "./src/Form.tsx",
+    "./src/useForm.ts",
+    "./src/utils/typeUtil.ts",
+    "./src/utils/valueUtil.ts",
+    "typings/index.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
